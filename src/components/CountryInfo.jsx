@@ -1,6 +1,6 @@
 import { helperFormatNumberToLocaleBR } from "../helpers/numberHelpers";
 
-function CountyInfo() {
+function CountryInfo() {
   return (
     <div className="m-6">
       <h3 className="text-center">Eleição em {"Asgard"}</h3>
@@ -23,4 +23,4 @@ function CountyInfo() {
   );
 }
 
-export { CountyInfo };
+export { CountryInfo };

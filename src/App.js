@@ -1,5 +1,5 @@
 import { Card } from "./components/Card";
-import { CountyInfo } from "./components/CountyInfo";
+import { CountryInfo } from "./components/CountryInfo";
 
 export default function App() {
   console.log("Teste no console do navegador");
@@ -15,7 +15,7 @@ export default function App() {
       </header>
 
       <main>
-        <CountyInfo />
+        <CountryInfo />
         <div className="container mx-auto p-4">
           <h2>O conteúdo fica aqui.</h2>
           <Card />
