@@ -15,3 +15,13 @@ export function helperFormatPercentage(value) {
 export function helperFormatNumberToLocaleBR(value) {
   return Number(value).toLocaleString("pt-BR");
 }
+
+export function calculatePercentage(initialValue, finalValue) {
+  const division = initialValue / finalValue;
+
+  if (division > 0) {
+    return division * 100;
+  }
+
+  return 0;
+}
