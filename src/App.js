@@ -32,13 +32,11 @@ export default function App() {
 
         const electionDataForSelectedCountry = electionData
           .filter((election) => election.cityId === selectedCountryFullInfo.id)
-          .map((item, index, arr) => {
-            // let totalVotes = +item.votes;
+          .map((item) => {
             return {
               candidate: {
                 ...candidatesData.filter((c) => item.candidateId === c.id)[0],
               },
-              // totalVotes: totalVotes,
               ...item,
             };
           })
