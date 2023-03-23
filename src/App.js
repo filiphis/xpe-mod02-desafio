@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { ClipLoader } from "react-spinners";
 import { CardList } from "./components/CardList";
 import { CountryInfo } from "./components/CountryInfo";
 import { SelectInput } from "./components/SelectInput";
@@ -11,7 +12,8 @@ export default function App() {
   const [allCountries, setAllCountries] = useState([]);
 
   const [elections, setElections] = useState([]);
-  // const electionFilter =
+
+  const [isLoading, setIsLoading] = useState(true);
 
   const totalVotes = elections.reduce((accumulator, currentValue) => {
     return accumulator + currentValue.votes;
@@ -19,29 +21,34 @@ export default function App() {
 
   useEffect(() => {
     async function fetchData() {
-      const [candidatesResponse, electionResponse] = await Promise.all([
-        api.get("/candidates"),
-        api.get("/election"),
-      ]);
+      try {
+        const [candidatesResponse, electionResponse] = await Promise.all([
+          api.get("/candidates"),
+          api.get("/election"),
+        ]);
 
-      const candidatesData = candidatesResponse.data;
-      const electionData = electionResponse.data;
+        const candidatesData = candidatesResponse.data;
+        const electionData = electionResponse.data;
 
-      const electionDataForSelectedCountry = electionData
-        .filter((election) => election.cityId === selectedCountryFullInfo.id)
-        .map((item, index, arr) => {
-          // let totalVotes = +item.votes;
-          return {
-            candidate: {
-              ...candidatesData.filter((c) => item.candidateId === c.id)[0],
-            },
-            // totalVotes: totalVotes,
-            ...item,
-          };
-        })
-        .sort((a, b) => b.votes - a.votes);
+        const electionDataForSelectedCountry = electionData
+          .filter((election) => election.cityId === selectedCountryFullInfo.id)
+          .map((item, index, arr) => {
+            // let totalVotes = +item.votes;
+            return {
+              candidate: {
+                ...candidatesData.filter((c) => item.candidateId === c.id)[0],
+              },
+              // totalVotes: totalVotes,
+              ...item,
+            };
+          })
+          .sort((a, b) => b.votes - a.votes);
 
-      setElections(electionDataForSelectedCountry);
+        setElections(electionDataForSelectedCountry);
+      } catch (error) {
+      } finally {
+        setIsLoading(false);
+      }
     }
 
     fetchData();
@@ -60,28 +67,22 @@ export default function App() {
     fetchCountries();
   }, []);
 
-  // useEffect(() => {
-  //   const findActuallyCountry = allCountries.find(
-  //     (country) => country.name === selectedCountry
-  //   );
-
-  //   // ***
-  //   setSelectedCountryFullInfo(findActuallyCountry);
-  // }, [selectedCountry]);
-
   function handleSelectedCountryChange(event) {
     const newSelectedCountry = event.target.value;
 
-    // ***
     setSelectedCountry(newSelectedCountry);
-
-    const findActuallyCountry = allCountries.find(
-      (country) => country.name === selectedCountry
-    );
-
-    // ***
-    setSelectedCountryFullInfo(findActuallyCountry);
   }
+
+  function handleCountryInfo(countryInfo) {
+    console.log("handleCountryInfo::: > countryInfo", countryInfo);
+    setSelectedCountryFullInfo(countryInfo);
+  }
+
+  const loadingComponent = (
+    <div className="flex justify-center mt-6">
+      <ClipLoader loading={isLoading} color="#000000" />
+    </div>
+  );
 
   return (
     <>
@@ -93,21 +94,29 @@ export default function App() {
         </div>
       </header>
 
-      <main>
-        <SelectInput
-          selectedCountry={selectedCountry}
-          onSelectedCountry={handleSelectedCountryChange}
-          allCountries={allCountries}
-        />
-        {/* problema aqui */}
-        <CountryInfo selectedCountry={selectedCountryFullInfo} />
-        <div className="container mx-auto p-4">
-          <CardList
-            countryAndCandidatesList={elections}
-            totalVotes={totalVotes}
+      {isLoading ? (
+        loadingComponent
+      ) : (
+        <main>
+          <SelectInput
+            selectedCountry={selectedCountry}
+            onSelectedCountry={handleSelectedCountryChange}
+            onUpdateCountryInfo={handleCountryInfo}
+            allCountries={allCountries}
           />
-        </div>
-      </main>
+          {console.log(
+            "selectedCountryFullInfo no App: ",
+            selectedCountryFullInfo
+          )}
+          <CountryInfo selectedCountry={selectedCountryFullInfo} />
+          <div className="container mx-auto p-4">
+            <CardList
+              countryAndCandidatesList={elections}
+              totalVotes={totalVotes}
+            />
+          </div>
+        </main>
+      )}
     </>
   );
 }

@@ -1,5 +1,38 @@
-function SelectInput({ onSelectedCountry, selectedCountry, allCountries }) {
+function SelectInput({
+  onSelectedCountry,
+  selectedCountry,
+  allCountries,
+  onUpdateCountryInfo,
+}) {
   function handleSelectedCountryChange(event) {
+    const id =
+      event.target.options[event.target.selectedIndex].getAttribute("data-id");
+    const name =
+      event.target.options[event.target.selectedIndex].getAttribute(
+        "data-name"
+      );
+    const votingPopulation = event.target.options[
+      event.target.selectedIndex
+    ].getAttribute("data-votingPopulation");
+
+    const absence =
+      event.target.options[event.target.selectedIndex].getAttribute(
+        "data-absence"
+      );
+    const presence =
+      event.target.options[event.target.selectedIndex].getAttribute(
+        "data-presence"
+      );
+
+    const countryInfo = {
+      id,
+      name,
+      votingPopulation,
+      absence,
+      presence,
+    };
+
+    onUpdateCountryInfo(countryInfo);
     onSelectedCountry(event);
   }
 
@@ -12,11 +45,21 @@ function SelectInput({ onSelectedCountry, selectedCountry, allCountries }) {
         value={selectedCountry}
         onChange={handleSelectedCountryChange}
       >
-        {allCountries.map(({ id, name }) => (
-          <option key={id} value={name}>
-            {name}
-          </option>
-        ))}
+        {allCountries.map(
+          ({ id, name, votingPopulation, absence, presence }) => (
+            <option
+              key={id}
+              value={name}
+              data-id={id}
+              data-name={name}
+              data-votingpopulation={votingPopulation}
+              data-absence={absence}
+              data-presence={presence}
+            >
+              {name}
+            </option>
+          )
+        )}
       </select>
     </div>
   );

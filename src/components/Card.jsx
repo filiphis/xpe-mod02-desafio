@@ -1,4 +1,3 @@
-import UserAvatar from "../assets/spiderMan.png";
 import {
   calculatePercentage,
   helperFormatNumberToLocaleBR,
@@ -17,7 +16,11 @@ function Card({
     <div className="w-60 h-48 shadow-xl flex flex-col px-4 py-6 ">
       <div className="flex flex-row justify-between items-center ">
         <div className=" w-16 h-16 rounded-full bg-yellow-700 overflow-hidden">
-          <img className="max-h-full max-w-full" src={UserAvatar} alt="" />
+          <img
+            className="max-h-full max-w-full"
+            src={`./${candidateName}.png`}
+            alt=""
+          />
         </div>
         <div className="flex flex-col items-center">
           <span className={` font-bold ${textColorWinner}`}>
