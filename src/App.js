@@ -1,8 +1,40 @@
+import { useEffect, useState } from "react";
 import { Card } from "./components/Card";
+import { CardList } from "./components/CardList";
 import { CountryInfo } from "./components/CountryInfo";
+import { SelectInput } from "./components/SelectInput";
+import { api } from "./service/axios";
 
 export default function App() {
-  console.log("Teste no console do navegador");
+  const [selectedCountry, setSelectedCountry] = useState("");
+  const [selectedCountryFullInfo, setSelectedCountryFullInfo] = useState({});
+
+  const [allCountries, setAllCountries] = useState([]);
+
+  useEffect(() => {
+    async function fetchCountries() {
+      const response = await api.get("/cities/?\\_sort=name&\\_order=desc");
+      const newCountries = response.data;
+
+      setAllCountries(newCountries);
+      setSelectedCountry(newCountries[0].name);
+      setSelectedCountryFullInfo(newCountries[0]);
+    }
+
+    fetchCountries();
+  }, []);
+
+  function handleSelectedCountryChange(event) {
+    const newSelectedCountry = event.target.value;
+
+    setSelectedCountry(newSelectedCountry);
+
+    const findActuallyCountry = allCountries.find(
+      (country) => country.name === selectedCountry
+    );
+
+    setSelectedCountryFullInfo(findActuallyCountry);
+  }
 
   return (
     <>
@@ -15,10 +47,14 @@ export default function App() {
       </header>
 
       <main>
-        <CountryInfo />
+        <SelectInput
+          selectedCountry={selectedCountry}
+          onSelectedCountry={handleSelectedCountryChange}
+          allCountries={allCountries}
+        />
+        <CountryInfo selectedCountry={selectedCountryFullInfo} />
         <div className="container mx-auto p-4">
-          <h2>O conteúdo fica aqui.</h2>
-          <Card />
+          <CardList selectedCountryFullInfo={selectedCountryFullInfo} />
         </div>
       </main>
     </>
